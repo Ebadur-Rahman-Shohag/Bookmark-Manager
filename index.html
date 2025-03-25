@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bookmark Manager</title>
+    <style>
+      .gidole {
+        font-family: "Gidole", sans-serif;
+      }
+    </style>
+    <!-- Google font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Gidole&display=swap"
+      rel="stylesheet"
+    />
+    <!-- daisy and tailwind -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@5"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+  <body class="gidole">
+    <main class="lg:py-8">
+      <!-- container section -->
+      <section
+        class="container max-w-7xl mx-auto border-2 border-black min-h-screen lg:rounded-xl"
+      >
+        <h1 class="text-center font-bold text-4xl py-8">Bookmark Manager</h1>
+        <!-- form -->
+        <form class="mt-10 flex flex-col justify-center items-center gap-6">
+          <input
+            id="title"
+            class="px-20 py-4 border-2 rounded-lg"
+            type="text"
+            placeholder="Enter Your Title"
+          />
+          <input
+            id="link"
+            class="px-20 py-4 border-2 rounded-lg"
+            type="text"
+            placeholder="Paste Your Link"
+          />
+          <input
+            id="category"
+            class="px-20 py-4 border-2 rounded-lg"
+            type="text"
+            placeholder="Enter Your Category"
+          />
+
+          <button
+            id="btn-add"
+            class="btn border-2 border-black text-xl font-bold px-10 py-2 rounded-lg"
+          >
+            Add
+          </button>
+        </form>
+        <!-- cards container -->
+        <div id="bookmarks-container"
+          class="mt-10 px-4 grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5 py-4"
+        >
+          <!-- card -->
+      
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="./js/script.js"></script>
+  </body>
+</html>
