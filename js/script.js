@@ -4,8 +4,13 @@ document.getElementById("btn-add").addEventListener("click", function (event) {
     const title = document.getElementById("title").value;
     const link = document.getElementById("link").value;
     const category = document.getElementById("category").value;
+    if (!title || !link || !category) {
+        Swal.fire("Please fill all fields");
+    }
 
-    addToLocalStorage(title, link, category);
+    if (title && category && category) {
+        addToLocalStorage(title, link, category);
+    }
 
     document.getElementById("title").value = "";
     document.getElementById("link").value = "";
@@ -36,7 +41,7 @@ const displayBookmarks = () => {
     const bookmarksContainer = document.getElementById("bookmarks-container");
 
     // Clear previous bookmarks before rendering new ones
-    bookmarksContainer.innerHTML = '';
+    bookmarksContainer.innerHTML = "";
 
     const data = JSON.parse(localStorage.getItem("bookmarksData"));
     for (let bookmark of data) {
@@ -75,17 +80,14 @@ const displayBookmarks = () => {
 
 // delete bookmark card when delete button is clicked
 const deleteBookmarks = (id) => {
-
     const data = JSON.parse(localStorage.getItem("bookmarksData")) || [];
     const updatedData = data.filter((item) => item.id !== id);
     localStorage.setItem("bookmarksData", JSON.stringify(updatedData));
     displayBookmarks();
-}
+};
 
 // Make deleteBookmarks accessible globally
 window.deleteBookmarks = deleteBookmarks;
 
 // Call displayBookmarks when the page loads
 document.addEventListener("DOMContentLoaded", displayBookmarks);
-
-
