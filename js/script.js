@@ -91,7 +91,6 @@ const searchBookmarks = () => {
     : allData;
 
   displayFilteredBookmarks(filteredData);
-
 };
 
 // Function to update the UI without modifying localStorage
@@ -104,6 +103,8 @@ const displayFilteredBookmarks = (data) => {
     return;
   }
 
+
+  document.getElementById("not-found").style.display = "none";
   for (let bookmark of data) {
     bookmarksContainer.innerHTML += `<div
             class="flex flex-col justify-center px-6 gap-4 border-2 border-black rounded-2xl py-4"
