@@ -69,7 +69,7 @@ const displayBookmarks = () => {
               <button
                 onclick=deleteBookmarks('${bookmark.id}')
                 id="btn-delete-${bookmark.id}"
-                class="border-2 border-black rounded-md px-8 py-2 font-medium text-xl"
+                class="hover:bg-black hover:text-white  border-2 border-black rounded-md px-8 py-2 font-medium text-xl"
               >
                 Delete
               </button>
@@ -99,7 +99,7 @@ const displayFilteredBookmarks = (data) => {
   bookmarksContainer.innerHTML = "";
 
   if (data.length === 0) {
-    bookmarksContainer.innerHTML = "<p class='text-gray-500'>No bookmarks found</p>";
+    document.getElementById("not-found").style.display = "flex";
     return;
   }
 
@@ -128,7 +128,7 @@ const displayFilteredBookmarks = (data) => {
               <button
                 onclick=deleteBookmarks('${bookmark.id}')
                 id="btn-delete-${bookmark.id}"
-                class="border-2 border-black rounded-md px-8 py-2 font-medium text-xl"
+                class=" border-2 border-black rounded-md px-8 py-2 font-medium text-xl"
               >
                 Delete
               </button>
@@ -140,8 +140,6 @@ const displayFilteredBookmarks = (data) => {
 // Call searchBookmarks on every input change
 document.getElementById("search").addEventListener("input", searchBookmarks);
 
-
-
 // delete bookmark card when delete button is clicked
 const deleteBookmarks = (id) => {
   const data = JSON.parse(localStorage.getItem("bookmarksData")) || [];
@@ -149,8 +147,6 @@ const deleteBookmarks = (id) => {
   localStorage.setItem("bookmarksData", JSON.stringify(updatedData));
   displayBookmarks();
 };
-
-
 
 // Make deleteBookmarks accessible globally
 window.deleteBookmarks = deleteBookmarks;
