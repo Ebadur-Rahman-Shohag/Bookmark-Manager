@@ -91,6 +91,7 @@ const searchBookmarks = () => {
     : allData;
 
   displayFilteredBookmarks(filteredData);
+
 };
 
 // Function to update the UI without modifying localStorage
@@ -124,11 +125,11 @@ const displayFilteredBookmarks = (data) => {
               href="${bookmark.link}"
               >Go to the website</a
             >
-            <div   class="w-full text-right px-6">
+            <div class="w-full text-right px-6">
               <button
                 onclick=deleteBookmarks('${bookmark.id}')
                 id="btn-delete-${bookmark.id}"
-                class=" border-2 border-black rounded-md px-8 py-2 font-medium text-xl"
+                class="hover:bg-black hover:text-white border-2 border-black rounded-md px-8 py-2 font-medium text-xl"
               >
                 Delete
               </button>
