@@ -34,6 +34,7 @@
         class="container max-w-7xl mx-auto border-2 border-black min-h-screen lg:rounded-xl"
       >
         <h1 class="text-center font-bold text-4xl py-8">Bookmark Manager</h1>
+
         <!-- form -->
         <form class="mt-10 flex flex-col justify-center items-center gap-6">
           <input
@@ -62,12 +63,19 @@
             Add
           </button>
         </form>
+
+        <!-- search bar -->
+        <div class="mt-10 flex justify-center items-center">
+          <input onkeyup="searchBookmarks()" id="search" type="text" placeholder="Search Your Bookmark" class="px-20 py-4 border-2 rounded-lg " />
+          
+        </div>
+
         <!-- cards container -->
-        <div id="bookmarks-container"
+        <div
+          id="bookmarks-container"
           class="mt-10 px-4 grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5 py-4"
         >
           <!-- card -->
-      
         </div>
       </section>
     </main>
