@@ -1,20 +1,67 @@
+// HTML escape function for security
+const escapeHtml = (text) => {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+};
+
+// Configure SweetAlert2 for modern dark theme
+Swal.mixin({
+  background: '#1a2240',
+  color: '#f0f9ff',
+  confirmButtonColor: '#1dd4bf',
+  confirmButtonText: 'OK',
+});
+
 // when add button is clicked
 document.getElementById("btn-add").addEventListener("click", function (event) {
   event.preventDefault();
-  const title = document.getElementById("title").value;
-  const link = document.getElementById("link").value;
-  const category = document.getElementById("category").value;
+  const title = document.getElementById("title").value.trim();
+  const link = document.getElementById("link").value.trim();
+  const category = document.getElementById("category").value.trim();
+  
   if (!title || !link || !category) {
-    Swal.fire("Please fill all fields");
+    Swal.fire({
+      icon: 'warning',
+      title: 'Missing Fields',
+      text: 'Please fill all fields to add a bookmark',
+      background: '#1a2240',
+      color: '#f0f9ff',
+    });
+    return;
   }
 
-  if (title && category && category) {
-    addToLocalStorage(title, link, category);
+  // Simple URL validation
+  try {
+    new URL(link);
+  } catch (e) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Invalid URL',
+      text: 'Please enter a valid URL',
+      background: '#1a2240',
+      color: '#f0f9ff',
+    });
+    return;
   }
 
+  addToLocalStorage(title, link, category);
+  
+  // Clear inputs
   document.getElementById("title").value = "";
   document.getElementById("link").value = "";
   document.getElementById("category").value = "";
+  
+  // Show success message
+  Swal.fire({
+    icon: 'success',
+    title: 'Bookmark Added!',
+    text: 'Your bookmark has been saved successfully',
+    timer: 2000,
+    showConfirmButton: false,
+    background: '#1a2240',
+    color: '#f0f9ff',
+  });
 });
 
 // add items to the localStorage
@@ -45,36 +92,51 @@ const displayBookmarks = () => {
 
   const data = JSON.parse(localStorage.getItem("bookmarksData"));
   for (let bookmark of data) {
-    bookmarksContainer.innerHTML += `<div
-            class="flex flex-col justify-center px-6 gap-4 border-2 border-black rounded-2xl py-4"
-          >
-            <div class="flex justify-between">
-              <h3 class="text-black font-semibold text-2xl">
-                ${bookmark.title}
-              </h3>
+    const bookmarkCard = document.createElement("div");
+    bookmarkCard.className = "group animate-fade-in";
+    bookmarkCard.innerHTML = `
+      <div class="h-full flex flex-col bg-bg-secondary/40 backdrop-blur-sm border border-accent-primary/20 rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 hover:border-accent-primary/50 hover:bg-bg-secondary/60">
+        <!-- Header -->
+        <div class="flex items-start justify-between mb-4 gap-3">
+          <div class="flex-1 min-w-0">
+            <h3 class="text-lg font-semibold text-text-primary break-words group-hover:text-accent-primary transition-colors duration-200">
+              ${escapeHtml(bookmark.title)}
+            </h3>
+          </div>
+          <span class="flex-shrink-0 inline-block px-3 py-1 bg-accent-primary/20 border border-accent-primary/40 rounded-full text-xs font-medium text-accent-primary whitespace-nowrap">
+            ${escapeHtml(bookmark.category)}
+          </span>
+        </div>
 
-              <span
-                class="badge border-2 border-black px-3 py-3 text-lg font-normal"
-                >${bookmark.category}</span
-              >
-            </div>
+        <!-- Link -->
+        <a
+          href="${bookmark.link}"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 text-accent-primary hover:text-accent-hover font-medium text-sm mb-4 transition-colors duration-200 break-all"
+        >
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+          <span class="truncate">Visit website</span>
+        </a>
 
-            <a
-              target="_blank"
-              class="text-blue-500 font-medium text-xl"
-              href="${bookmark.link}"
-              >Go to the website</a
-            >
-            <div   class="w-full text-right px-6">
-              <button
-                onclick=deleteBookmarks('${bookmark.id}')
-                id="btn-delete-${bookmark.id}"
-                class="hover:bg-black hover:text-white  border-2 border-black rounded-md px-8 py-2 font-medium text-xl"
-              >
-                Delete
-              </button>
-            </div>
-          </div>`;
+        <!-- Spacer -->
+        <div class="flex-1"></div>
+
+        <!-- Delete Button -->
+        <button
+          onclick="deleteBookmarks('${bookmark.id}')"
+          class="w-full px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 rounded-lg text-red-400 hover:text-red-300 font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+          Delete
+        </button>
+      </div>
+    `;
+    bookmarksContainer.appendChild(bookmarkCard);
   }
 };
 
@@ -99,43 +161,57 @@ const displayFilteredBookmarks = (data) => {
   bookmarksContainer.innerHTML = "";
 
   if (data.length === 0) {
-    document.getElementById("not-found").style.display = "flex";
+    document.getElementById("not-found").style.display = "block";
     return;
   }
 
-
   document.getElementById("not-found").style.display = "none";
   for (let bookmark of data) {
-    bookmarksContainer.innerHTML += `<div
-            class="flex flex-col justify-center px-6 gap-4 border-2 border-black rounded-2xl py-4"
-          >
-            <div class="flex justify-between">
-              <h3 class="text-black font-semibold text-2xl">
-                ${bookmark.title}
-              </h3>
+    const bookmarkCard = document.createElement("div");
+    bookmarkCard.className = "group animate-fade-in";
+    bookmarkCard.innerHTML = `
+      <div class="h-full flex flex-col bg-bg-secondary/40 backdrop-blur-sm border border-accent-primary/20 rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 hover:border-accent-primary/50 hover:bg-bg-secondary/60">
+        <!-- Header -->
+        <div class="flex items-start justify-between mb-4 gap-3">
+          <div class="flex-1 min-w-0">
+            <h3 class="text-lg font-semibold text-text-primary break-words group-hover:text-accent-primary transition-colors duration-200">
+              ${escapeHtml(bookmark.title)}
+            </h3>
+          </div>
+          <span class="flex-shrink-0 inline-block px-3 py-1 bg-accent-primary/20 border border-accent-primary/40 rounded-full text-xs font-medium text-accent-primary whitespace-nowrap">
+            ${escapeHtml(bookmark.category)}
+          </span>
+        </div>
 
-              <span
-                class="badge border-2 border-black px-3 py-3 text-lg font-normal"
-                >${bookmark.category}</span
-              >
-            </div>
+        <!-- Link -->
+        <a
+          href="${bookmark.link}"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 text-accent-primary hover:text-accent-hover font-medium text-sm mb-4 transition-colors duration-200 break-all"
+        >
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+          <span class="truncate">Visit website</span>
+        </a>
 
-            <a
-              target="_blank"
-              class="text-blue-500 font-medium text-xl"
-              href="${bookmark.link}"
-              >Go to the website</a
-            >
-            <div class="w-full text-right px-6">
-              <button
-                onclick=deleteBookmarks('${bookmark.id}')
-                id="btn-delete-${bookmark.id}"
-                class="hover:bg-black hover:text-white border-2 border-black rounded-md px-8 py-2 font-medium text-xl"
-              >
-                Delete
-              </button>
-            </div>
-          </div>`;
+        <!-- Spacer -->
+        <div class="flex-1"></div>
+
+        <!-- Delete Button -->
+        <button
+          onclick="deleteBookmarks('${bookmark.id}')"
+          class="w-full px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 rounded-lg text-red-400 hover:text-red-300 font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+          Delete
+        </button>
+      </div>
+    `;
+    bookmarksContainer.appendChild(bookmarkCard);
   }
 };
 
@@ -144,10 +220,35 @@ document.getElementById("search").addEventListener("input", searchBookmarks);
 
 // delete bookmark card when delete button is clicked
 const deleteBookmarks = (id) => {
-  const data = JSON.parse(localStorage.getItem("bookmarksData")) || [];
-  const updatedData = data.filter((item) => item.id !== id);
-  localStorage.setItem("bookmarksData", JSON.stringify(updatedData));
-  displayBookmarks();
+  Swal.fire({
+    title: 'Delete Bookmark?',
+    text: 'This action cannot be undone',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#ef4444',
+    cancelButtonColor: '#64748b',
+    confirmButtonText: 'Yes, delete it',
+    cancelButtonText: 'Cancel',
+    background: '#1a2240',
+    color: '#f0f9ff',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const data = JSON.parse(localStorage.getItem("bookmarksData")) || [];
+      const updatedData = data.filter((item) => item.id !== id);
+      localStorage.setItem("bookmarksData", JSON.stringify(updatedData));
+      displayBookmarks();
+      
+      Swal.fire({
+        icon: 'success',
+        title: 'Deleted!',
+        text: 'Your bookmark has been removed',
+        timer: 1500,
+        showConfirmButton: false,
+        background: '#1a2240',
+        color: '#f0f9ff',
+      });
+    }
+  });
 };
 
 // Make deleteBookmarks accessible globally
