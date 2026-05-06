@@ -5,11 +5,11 @@ const escapeHtml = (text) => {
   return div.innerHTML;
 };
 
-// Configure SweetAlert2 for modern dark theme
+// Configure SweetAlert2 for modern light theme
 Swal.mixin({
-  background: '#1a2240',
-  color: '#f0f9ff',
-  confirmButtonColor: '#1dd4bf',
+  background: '#ffffff',
+  color: '#1e293b',
+  confirmButtonColor: '#2563eb',
   confirmButtonText: 'OK',
 });
 
@@ -20,13 +20,13 @@ document.getElementById("btn-add").addEventListener("click", function (event) {
   const link = document.getElementById("link").value.trim();
   const category = document.getElementById("category").value.trim();
   
-  if (!title || !link || !category) {
+  if (!title || !link) {
     Swal.fire({
       icon: 'warning',
       title: 'Missing Fields',
-      text: 'Please fill all fields to add a bookmark',
-      background: '#1a2240',
-      color: '#f0f9ff',
+      text: 'Please fill in Title and URL to add a bookmark',
+      background: '#ffffff',
+      color: '#1e293b',
     });
     return;
   }
@@ -39,8 +39,8 @@ document.getElementById("btn-add").addEventListener("click", function (event) {
       icon: 'error',
       title: 'Invalid URL',
       text: 'Please enter a valid URL',
-      background: '#1a2240',
-      color: '#f0f9ff',
+      background: '#ffffff',
+      color: '#1e293b',
     });
     return;
   }
@@ -59,8 +59,8 @@ document.getElementById("btn-add").addEventListener("click", function (event) {
     text: 'Your bookmark has been saved successfully',
     timer: 2000,
     showConfirmButton: false,
-    background: '#1a2240',
-    color: '#f0f9ff',
+    background: '#ffffff',
+    color: '#1e293b',
   });
 });
 
@@ -95,17 +95,17 @@ const displayBookmarks = () => {
     const bookmarkCard = document.createElement("div");
     bookmarkCard.className = "group animate-fade-in";
     bookmarkCard.innerHTML = `
-      <div class="h-full flex flex-col bg-bg-secondary/40 backdrop-blur-sm border border-accent-primary/20 rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 hover:border-accent-primary/50 hover:bg-bg-secondary/60">
+      <div class="h-full flex flex-col bg-bg-primary border border-border-color rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:border-accent-primary/50">
         <!-- Header -->
-        <div class="flex items-start justify-between mb-4 gap-3">
+        <div class="flex items-start justify-between mb-3 gap-3">
           <div class="flex-1 min-w-0">
-            <h3 class="text-lg font-semibold text-text-primary break-words group-hover:text-accent-primary transition-colors duration-200">
+            <h3 class="text-base font-semibold text-text-primary break-words group-hover:text-accent-primary transition-colors duration-200">
               ${escapeHtml(bookmark.title)}
             </h3>
           </div>
-          <span class="flex-shrink-0 inline-block px-3 py-1 bg-accent-primary/20 border border-accent-primary/40 rounded-full text-xs font-medium text-accent-primary whitespace-nowrap">
+          ${bookmark.category ? `<span class="flex-shrink-0 inline-block px-3 py-1 bg-accent-light border border-accent-primary/30 rounded-full text-xs font-medium text-accent-primary whitespace-nowrap">
             ${escapeHtml(bookmark.category)}
-          </span>
+          </span>` : ''}
         </div>
 
         <!-- Link -->
@@ -118,7 +118,7 @@ const displayBookmarks = () => {
           <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
           </svg>
-          <span class="truncate">Visit website</span>
+          <span class="truncate text-xs">Visit</span>
         </a>
 
         <!-- Spacer -->
@@ -127,7 +127,7 @@ const displayBookmarks = () => {
         <!-- Delete Button -->
         <button
           onclick="deleteBookmarks('${bookmark.id}')"
-          class="w-full px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 rounded-lg text-red-400 hover:text-red-300 font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2"
+          class="w-full px-4 py-2 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg text-red-600 hover:text-red-700 font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -170,17 +170,17 @@ const displayFilteredBookmarks = (data) => {
     const bookmarkCard = document.createElement("div");
     bookmarkCard.className = "group animate-fade-in";
     bookmarkCard.innerHTML = `
-      <div class="h-full flex flex-col bg-bg-secondary/40 backdrop-blur-sm border border-accent-primary/20 rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 hover:border-accent-primary/50 hover:bg-bg-secondary/60">
+      <div class="h-full flex flex-col bg-bg-primary border border-border-color rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:border-accent-primary/50">
         <!-- Header -->
-        <div class="flex items-start justify-between mb-4 gap-3">
+        <div class="flex items-start justify-between mb-3 gap-3">
           <div class="flex-1 min-w-0">
-            <h3 class="text-lg font-semibold text-text-primary break-words group-hover:text-accent-primary transition-colors duration-200">
+            <h3 class="text-base font-semibold text-text-primary break-words group-hover:text-accent-primary transition-colors duration-200">
               ${escapeHtml(bookmark.title)}
             </h3>
           </div>
-          <span class="flex-shrink-0 inline-block px-3 py-1 bg-accent-primary/20 border border-accent-primary/40 rounded-full text-xs font-medium text-accent-primary whitespace-nowrap">
+          ${bookmark.category ? `<span class="flex-shrink-0 inline-block px-3 py-1 bg-accent-light border border-accent-primary/30 rounded-full text-xs font-medium text-accent-primary whitespace-nowrap">
             ${escapeHtml(bookmark.category)}
-          </span>
+          </span>` : ''}
         </div>
 
         <!-- Link -->
@@ -193,7 +193,7 @@ const displayFilteredBookmarks = (data) => {
           <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
           </svg>
-          <span class="truncate">Visit website</span>
+          <span class="truncate text-xs">Visit</span>
         </a>
 
         <!-- Spacer -->
@@ -202,7 +202,7 @@ const displayFilteredBookmarks = (data) => {
         <!-- Delete Button -->
         <button
           onclick="deleteBookmarks('${bookmark.id}')"
-          class="w-full px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 rounded-lg text-red-400 hover:text-red-300 font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2"
+          class="w-full px-4 py-2 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg text-red-600 hover:text-red-700 font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -226,11 +226,11 @@ const deleteBookmarks = (id) => {
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#ef4444',
-    cancelButtonColor: '#64748b',
+    cancelButtonColor: '#94a3b8',
     confirmButtonText: 'Yes, delete it',
     cancelButtonText: 'Cancel',
-    background: '#1a2240',
-    color: '#f0f9ff',
+    background: '#ffffff',
+    color: '#1e293b',
   }).then((result) => {
     if (result.isConfirmed) {
       const data = JSON.parse(localStorage.getItem("bookmarksData")) || [];
@@ -244,8 +244,8 @@ const deleteBookmarks = (id) => {
         text: 'Your bookmark has been removed',
         timer: 1500,
         showConfirmButton: false,
-        background: '#1a2240',
-        color: '#f0f9ff',
+        background: '#ffffff',
+        color: '#1e293b',
       });
     }
   });

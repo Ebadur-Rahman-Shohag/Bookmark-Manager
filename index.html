@@ -9,16 +9,20 @@
     <style>
       :root {
         --bg-primary: #ffffff;
-        --bg-secondary: #f8fafc;
-        --bg-tertiary: #f1f5f9;
-        --accent-primary: #0066cc;
-        --accent-hover: #0052a3;
-        --text-primary: #0f172a;
+        --bg-secondary: #fafbfc;
+        --bg-tertiary: #f3f6f9;
+        --accent-primary: #2563eb;
+        --accent-hover: #1d4ed8;
+        --accent-light: #dbeafe;
+        --text-primary: #1e293b;
         --text-secondary: #64748b;
+        --text-tertiary: #94a3b8;
         --border-color: #e2e8f0;
-        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
-        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.08), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+        --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.08);
+        --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.1), 0 4px 6px -4px rgba(15, 23, 42, 0.1);
       }
 
       * {
@@ -79,17 +83,21 @@
             colors: {
               bg: {
                 primary: '#ffffff',
-                secondary: '#f8fafc',
-                tertiary: '#f1f5f9',
+                secondary: '#fafbfc',
+                tertiary: '#f3f6f9',
               },
               accent: {
-                primary: '#0066cc',
-                hover: '#0052a3',
+                primary: '#2563eb',
+                hover: '#1d4ed8',
+                light: '#dbeafe',
               },
               text: {
-                primary: '#0f172a',
+                primary: '#1e293b',
                 secondary: '#64748b',
+                tertiary: '#94a3b8',
               },
+              success: '#10b981',
+              warning: '#f59e0b',
             },
             fontFamily: {
               sans: ['Inter', 'sans-serif'],
@@ -100,9 +108,11 @@
               lg: '0 10px 15px -3px rgba(0, 0, 0, 0.5)',
             },
             borderRadius: {
+              sm: '6px',
+              md: '8px',
               lg: '12px',
-              xl: '16px',
-              '2xl': '20px',
+              xl: '14px',
+              '2xl': '16px',
             },
             animation: {
               'fade-in': 'fadeIn 0.3s ease-in',
@@ -127,71 +137,73 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </head>
   <body>
-    <main class="min-h-screen bg-gradient-to-br from-bg-primary via-bg-primary to-bg-secondary py-8 md:py-12">
+    <main class="min-h-screen bg-bg-secondary">
       <!-- Main Container -->
-      <div class="container max-w-6xl mx-auto px-4 md:px-6">
+      <div class="container max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
         <!-- Header Section -->
-        <header class="mb-12 text-center animate-fade-in">
-          <div class="inline-block mb-4">
-            <div class="flex items-center justify-center w-14 h-14 rounded-xl bg-accent-primary/10 border border-accent-primary/30">
-              <svg class="w-8 h-8 text-accent-primary" fill="currentColor" viewBox="0 0 20 20">
+        <header class="mb-10 animate-fade-in">
+          <div class="flex items-end gap-4 mb-2">
+            <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-accent-light border border-accent-primary/30">
+              <svg class="w-7 h-7 text-accent-primary" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
               </svg>
             </div>
+            <h1 class="text-3xl md:text-4xl font-bold text-text-primary">
+              Bookmark Manager
+            </h1>
           </div>
-          <h1 class="text-4xl md:text-5xl font-bold text-text-primary mb-2">
-            Bookmark Manager
-          </h1>
-          <p class="text-text-secondary text-lg max-w-2xl mx-auto">
-            Save, organize, and quickly access your favorite websites with a modern, intuitive interface
+          <p class="text-text-secondary text-base max-w-2xl">
+            Save, organize, and quickly access your favorite websites with ease
           </p>
         </header>
 
         <!-- Add Bookmark Form -->
-        <div class="mb-12 animate-slide-up">
-          <div class="bg-bg-secondary/40 backdrop-blur-sm border border-accent-primary/20 rounded-2xl p-8 shadow-lg">
-            <h2 class="text-xl font-semibold text-text-primary mb-6 flex items-center gap-2">
-              <svg class="w-6 h-6 text-accent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-              </svg>
+        <div class="mb-10 animate-slide-up">
+          <div class="bg-bg-primary border border-border-color rounded-xl p-7 shadow-md">
+            <h2 class="text-lg font-semibold text-text-primary mb-6 flex items-center gap-3">
+              <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-accent-light">
+                <svg class="w-5 h-5 text-accent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+                </svg>
+              </div>
               Add New Bookmark
             </h2>
             
-            <form class="space-y-4">
+            <form class="space-y-5">
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="md:col-span-1">
-                  <label for="title" class="block text-sm font-medium text-text-secondary mb-2">
-                    Title
+                  <label for="title" class="block text-sm font-medium text-text-primary mb-2">
+                    Title <span class="text-accent-primary">*</span>
                   </label>
                   <input
                     id="title"
                     type="text"
                     placeholder="e.g., GitHub"
-                    class="w-full px-4 py-3 bg-bg-primary border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary focus:border-transparent transition-all duration-200 text-text-primary placeholder-text-secondary/50"
+                    class="w-full px-4 py-2.5 bg-bg-secondary border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-0 focus:border-accent-primary transition-all duration-200 text-text-primary placeholder-text-tertiary text-sm"
                   />
                 </div>
 
                 <div class="md:col-span-1">
-                  <label for="link" class="block text-sm font-medium text-text-secondary mb-2">
-                    Link
+                  <label for="link" class="block text-sm font-medium text-text-primary mb-2">
+                    URL <span class="text-accent-primary">*</span>
                   </label>
                   <input
                     id="link"
                     type="url"
                     placeholder="https://example.com"
-                    class="w-full px-4 py-3 bg-bg-primary border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary focus:border-transparent transition-all duration-200 text-text-primary placeholder-text-secondary/50"
+                    class="w-full px-4 py-2.5 bg-bg-secondary border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-0 focus:border-accent-primary transition-all duration-200 text-text-primary placeholder-text-tertiary text-sm"
                   />
                 </div>
 
                 <div class="md:col-span-1">
-                  <label for="category" class="block text-sm font-medium text-text-secondary mb-2">
+                  <label for="category" class="block text-sm font-medium text-text-primary mb-2">
                     Category
                   </label>
                   <input
                     id="category"
                     type="text"
                     placeholder="e.g., Development"
-                    class="w-full px-4 py-3 bg-bg-primary border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary focus:border-transparent transition-all duration-200 text-text-primary placeholder-text-secondary/50"
+                    class="w-full px-4 py-2.5 bg-bg-secondary border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-0 focus:border-accent-primary transition-all duration-200 text-text-primary placeholder-text-tertiary text-sm"
                   />
                 </div>
               </div>
@@ -199,10 +211,10 @@
               <button
                 id="btn-add"
                 type="button"
-                class="w-full md:w-auto px-8 py-3 bg-gradient-to-r from-accent-primary to-accent-hover rounded-lg font-semibold text-bg-primary hover:shadow-lg transition-all duration-200 transform hover:scale-105 active:scale-95"
+                class="px-6 py-2.5 bg-accent-primary text-white rounded-lg font-medium text-sm hover:bg-accent-hover transition-all duration-200 shadow-sm hover:shadow-md active:scale-95"
               >
-                <svg class="inline-block w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                <svg class="inline-block w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
                 </svg>
                 Add Bookmark
               </button>
@@ -211,16 +223,16 @@
         </div>
 
         <!-- Search Bar -->
-        <div class="mb-8 animate-slide-up" style="animation-delay: 0.1s;">
+        <div class="mb-8 animate-slide-up" style="animation-delay: 0.05s;">
           <div class="relative">
-            <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <input
               id="search"
               type="text"
-              placeholder="Search bookmarks by title..."
-              class="w-full pl-12 pr-4 py-3 bg-bg-secondary border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary focus:border-transparent transition-all duration-200 text-text-primary placeholder-text-secondary/50"
+              placeholder="Search by title or category..."
+              class="w-full pl-12 pr-4 py-2.5 bg-bg-primary border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-0 focus:border-accent-primary transition-all duration-200 text-text-primary placeholder-text-tertiary text-sm"
             />
           </div>
         </div>
@@ -228,11 +240,11 @@
         <!-- No Bookmarks Found Message -->
         <div id="not-found" class="hidden">
           <div class="text-center py-16">
-            <svg class="w-16 h-16 mx-auto text-text-secondary/40 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9-4v4m4-4v4" />
+            <svg class="w-14 h-14 mx-auto text-text-tertiary mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9-4v4m4-4v4" />
             </svg>
-            <p class="text-xl font-semibold text-text-secondary">No bookmarks found</p>
-            <p class="text-text-secondary/70 mt-2">Try adjusting your search or add a new bookmark</p>
+            <p class="text-lg font-semibold text-text-primary">No bookmarks found</p>
+            <p class="text-text-secondary mt-2 text-sm">Try adjusting your search or create a new bookmark</p>
           </div>
         </div>
 
