@@ -5,11 +5,11 @@ const escapeHtml = (text) => {
   return div.innerHTML;
 };
 
-// Configure SweetAlert2 for modern light theme
+// Configure SweetAlert2 for modern dark theme
 Swal.mixin({
-  background: '#ffffff',
-  color: '#1e293b',
-  confirmButtonColor: '#2563eb',
+  background: '#151b24',
+  color: '#e8ecf1',
+  confirmButtonColor: '#00d9ff',
   confirmButtonText: 'OK',
 });
 
@@ -25,8 +25,8 @@ document.getElementById("btn-add").addEventListener("click", function (event) {
       icon: 'warning',
       title: 'Missing Fields',
       text: 'Please fill in Title and URL to add a bookmark',
-      background: '#ffffff',
-      color: '#1e293b',
+      background: '#151b24',
+      color: '#e8ecf1',
     });
     return;
   }
@@ -39,8 +39,8 @@ document.getElementById("btn-add").addEventListener("click", function (event) {
       icon: 'error',
       title: 'Invalid URL',
       text: 'Please enter a valid URL',
-      background: '#ffffff',
-      color: '#1e293b',
+      background: '#151b24',
+      color: '#e8ecf1',
     });
     return;
   }
@@ -59,8 +59,8 @@ document.getElementById("btn-add").addEventListener("click", function (event) {
     text: 'Your bookmark has been saved successfully',
     timer: 2000,
     showConfirmButton: false,
-    background: '#ffffff',
-    color: '#1e293b',
+    background: '#151b24',
+    color: '#e8ecf1',
   });
 });
 
@@ -95,15 +95,15 @@ const displayBookmarks = () => {
     const bookmarkCard = document.createElement("div");
     bookmarkCard.className = "group animate-fade-in";
     bookmarkCard.innerHTML = `
-      <div class="h-full flex flex-col bg-bg-primary border border-border-color rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:border-accent-primary/50">
+      <div class="h-full flex flex-col bg-gradient-to-br from-bg-secondary to-bg-tertiary border border-accent-primary/20 rounded-2xl p-6 shadow-lg hover:shadow-xl hover:border-accent-primary/50 transition-all duration-300" style="box-shadow: 0 0 20px rgba(0, 217, 255, 0.05);">
         <!-- Header -->
-        <div class="flex items-start justify-between mb-3 gap-3">
+        <div class="flex items-start justify-between mb-4 gap-3">
           <div class="flex-1 min-w-0">
-            <h3 class="text-base font-semibold text-text-primary break-words group-hover:text-accent-primary transition-colors duration-200">
+            <h3 class="text-lg font-bold text-text-primary break-words group-hover:text-accent-primary transition-colors duration-200">
               ${escapeHtml(bookmark.title)}
             </h3>
           </div>
-          ${bookmark.category ? `<span class="flex-shrink-0 inline-block px-3 py-1 bg-accent-light border border-accent-primary/30 rounded-full text-xs font-medium text-accent-primary whitespace-nowrap">
+          ${bookmark.category ? `<span class="flex-shrink-0 inline-block px-3 py-1.5 bg-accent-primary/15 border border-accent-primary/40 rounded-full text-xs font-semibold text-accent-primary whitespace-nowrap">
             ${escapeHtml(bookmark.category)}
           </span>` : ''}
         </div>
@@ -113,12 +113,12 @@ const displayBookmarks = () => {
           href="${bookmark.link}"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-2 text-accent-primary hover:text-accent-hover font-medium text-sm mb-4 transition-colors duration-200 break-all"
+          class="inline-flex items-center gap-2 text-accent-primary hover:text-accent-hover font-semibold text-sm mb-4 transition-colors duration-200 break-all group/link"
         >
-          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          <svg class="w-4 h-4 flex-shrink-0 group-hover/link:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
           </svg>
-          <span class="truncate text-xs">Visit</span>
+          <span class="truncate text-xs">Visit Link</span>
         </a>
 
         <!-- Spacer -->
@@ -127,10 +127,10 @@ const displayBookmarks = () => {
         <!-- Delete Button -->
         <button
           onclick="deleteBookmarks('${bookmark.id}')"
-          class="w-full px-4 py-2 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg text-red-600 hover:text-red-700 font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2"
+          class="w-full px-4 py-2.5 bg-red-900/30 hover:bg-red-900/50 border border-red-700/50 rounded-lg text-red-300 hover:text-red-200 font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
           </svg>
           Delete
         </button>
@@ -170,15 +170,15 @@ const displayFilteredBookmarks = (data) => {
     const bookmarkCard = document.createElement("div");
     bookmarkCard.className = "group animate-fade-in";
     bookmarkCard.innerHTML = `
-      <div class="h-full flex flex-col bg-bg-primary border border-border-color rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:border-accent-primary/50">
+      <div class="h-full flex flex-col bg-gradient-to-br from-bg-secondary to-bg-tertiary border border-accent-primary/20 rounded-2xl p-6 shadow-lg hover:shadow-xl hover:border-accent-primary/50 transition-all duration-300" style="box-shadow: 0 0 20px rgba(0, 217, 255, 0.05);">
         <!-- Header -->
-        <div class="flex items-start justify-between mb-3 gap-3">
+        <div class="flex items-start justify-between mb-4 gap-3">
           <div class="flex-1 min-w-0">
-            <h3 class="text-base font-semibold text-text-primary break-words group-hover:text-accent-primary transition-colors duration-200">
+            <h3 class="text-lg font-bold text-text-primary break-words group-hover:text-accent-primary transition-colors duration-200">
               ${escapeHtml(bookmark.title)}
             </h3>
           </div>
-          ${bookmark.category ? `<span class="flex-shrink-0 inline-block px-3 py-1 bg-accent-light border border-accent-primary/30 rounded-full text-xs font-medium text-accent-primary whitespace-nowrap">
+          ${bookmark.category ? `<span class="flex-shrink-0 inline-block px-3 py-1.5 bg-accent-primary/15 border border-accent-primary/40 rounded-full text-xs font-semibold text-accent-primary whitespace-nowrap">
             ${escapeHtml(bookmark.category)}
           </span>` : ''}
         </div>
@@ -188,12 +188,12 @@ const displayFilteredBookmarks = (data) => {
           href="${bookmark.link}"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-2 text-accent-primary hover:text-accent-hover font-medium text-sm mb-4 transition-colors duration-200 break-all"
+          class="inline-flex items-center gap-2 text-accent-primary hover:text-accent-hover font-semibold text-sm mb-4 transition-colors duration-200 break-all group/link"
         >
-          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          <svg class="w-4 h-4 flex-shrink-0 group-hover/link:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
           </svg>
-          <span class="truncate text-xs">Visit</span>
+          <span class="truncate text-xs">Visit Link</span>
         </a>
 
         <!-- Spacer -->
@@ -202,10 +202,10 @@ const displayFilteredBookmarks = (data) => {
         <!-- Delete Button -->
         <button
           onclick="deleteBookmarks('${bookmark.id}')"
-          class="w-full px-4 py-2 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg text-red-600 hover:text-red-700 font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2"
+          class="w-full px-4 py-2.5 bg-red-900/30 hover:bg-red-900/50 border border-red-700/50 rounded-lg text-red-300 hover:text-red-200 font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
           </svg>
           Delete
         </button>
@@ -226,11 +226,11 @@ const deleteBookmarks = (id) => {
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#ef4444',
-    cancelButtonColor: '#94a3b8',
+    cancelButtonColor: '#7a86a3',
     confirmButtonText: 'Yes, delete it',
     cancelButtonText: 'Cancel',
-    background: '#ffffff',
-    color: '#1e293b',
+    background: '#151b24',
+    color: '#e8ecf1',
   }).then((result) => {
     if (result.isConfirmed) {
       const data = JSON.parse(localStorage.getItem("bookmarksData")) || [];
@@ -244,8 +244,8 @@ const deleteBookmarks = (id) => {
         text: 'Your bookmark has been removed',
         timer: 1500,
         showConfirmButton: false,
-        background: '#ffffff',
-        color: '#1e293b',
+        background: '#151b24',
+        color: '#e8ecf1',
       });
     }
   });
