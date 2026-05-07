@@ -112,6 +112,12 @@ const buildCardHTML = (bookmark) => {
 
   return `
     <article class="bookmark-card" role="listitem" aria-label="${escapeHtml(bookmark.title)}">
+      <div class="bc-drag-handle" aria-hidden="true">
+        <svg width="16" height="8" viewBox="0 0 16 8" fill="currentColor">
+          <circle cx="2" cy="2" r="1.5"/><circle cx="8" cy="2" r="1.5"/><circle cx="14" cy="2" r="1.5"/>
+          <circle cx="2" cy="6" r="1.5"/><circle cx="8" cy="6" r="1.5"/><circle cx="14" cy="6" r="1.5"/>
+        </svg>
+      </div>
       <div class="bc-top">
         <div class="bc-favicon" aria-hidden="true">${faviconHTML}</div>
         <div class="bc-meta">
@@ -152,6 +158,63 @@ const buildCardHTML = (bookmark) => {
     </article>`;
 };
 
+// ── Drag and Drop ──────────────────────────────────────────
+let dragSrcId = null;
+
+const makeDraggable = (wrapper, bookmarkId) => {
+  wrapper.setAttribute('draggable', 'true');
+  wrapper.dataset.id = bookmarkId;
+
+  wrapper.addEventListener('dragstart', (e) => {
+    dragSrcId = bookmarkId;
+    wrapper.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', bookmarkId);
+  });
+
+  wrapper.addEventListener('dragend', () => {
+    wrapper.classList.remove('dragging');
+    document.querySelectorAll('.bookmark-card-wrapper').forEach((w) => {
+      w.classList.remove('drag-over', 'drop-before', 'drop-after');
+    });
+  });
+
+  wrapper.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (dragSrcId === bookmarkId) return;
+
+    document.querySelectorAll('.bookmark-card-wrapper').forEach((w) => {
+      w.classList.remove('drag-over');
+    });
+    wrapper.classList.add('drag-over');
+  });
+
+  wrapper.addEventListener('dragleave', (e) => {
+    // Only remove if leaving the wrapper entirely
+    if (!wrapper.contains(e.relatedTarget)) {
+      wrapper.classList.remove('drag-over');
+    }
+  });
+
+  wrapper.addEventListener('drop', (e) => {
+    e.preventDefault();
+    if (dragSrcId === bookmarkId) return;
+
+    const data = JSON.parse(localStorage.getItem('bookmarksData')) || [];
+    const srcIndex  = data.findIndex((b) => b.id === dragSrcId);
+    const destIndex = data.findIndex((b) => b.id === bookmarkId);
+    if (srcIndex === -1 || destIndex === -1) return;
+
+    // Reorder: remove src, insert at dest position
+    const [moved] = data.splice(srcIndex, 1);
+    data.splice(destIndex, 0, moved);
+
+    localStorage.setItem('bookmarksData', JSON.stringify(data));
+    displayBookmarks();
+  });
+};
+
 // ── Display all bookmarks ──────────────────────────────────
 const displayBookmarks = () => {
   const container = document.getElementById('bookmarks-container');
@@ -168,6 +231,7 @@ const displayBookmarks = () => {
     const wrapper = document.createElement('div');
     wrapper.className = 'bookmark-card-wrapper';
     wrapper.innerHTML = buildCardHTML(bookmark);
+    makeDraggable(wrapper, bookmark.id);
     container.appendChild(wrapper);
   });
 };
@@ -200,6 +264,7 @@ const displayFilteredBookmarks = (data) => {
     const wrapper = document.createElement('div');
     wrapper.className = 'bookmark-card-wrapper';
     wrapper.innerHTML = buildCardHTML(bookmark);
+    // Don't enable drag during search — order changes would be confusing
     container.appendChild(wrapper);
   });
 };

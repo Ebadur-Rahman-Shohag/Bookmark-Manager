@@ -503,6 +503,64 @@ body {
 /* Card wrapper — used for animation */
 .bookmark-card-wrapper {
   animation: fadeSlideUp .3s ease both;
+  cursor: grab;
+}
+
+.bookmark-card-wrapper:active {
+  cursor: grabbing;
+}
+
+/* Drag states */
+.bookmark-card-wrapper.dragging {
+  opacity: 0.35;
+  cursor: grabbing;
+}
+
+.bookmark-card-wrapper.drag-over {
+  transform: scale(1.02);
+}
+
+.bookmark-card-wrapper.drag-over .bookmark-card {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary), var(--shadow-md);
+}
+
+/* Drop indicator line */
+.bookmark-card-wrapper.drop-before::before {
+  content: '';
+  display: block;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  border-radius: var(--radius-full);
+  margin-bottom: 10px;
+  animation: fadeIn .15s ease;
+}
+
+.bookmark-card-wrapper.drop-after::after {
+  content: '';
+  display: block;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  border-radius: var(--radius-full);
+  margin-top: 10px;
+  animation: fadeIn .15s ease;
+}
+
+/* Drag handle hint on hover */
+.bookmark-card-wrapper:hover .bc-drag-handle {
+  opacity: 1;
+}
+
+.bc-drag-handle {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  color: var(--text-muted);
+  transition: opacity var(--transition);
+  pointer-events: none;
+  line-height: 0;
 }
 
 @keyframes fadeSlideUp {
@@ -650,15 +708,8 @@ body {
 .bc-actions {
   display: flex;
   gap: 8px;
-  padding: 12px 14px;
-  margin: 14px -22px -18px;
-  background: #F1F5F9;
+  padding-top: 14px;
   border-top: 1px solid var(--border);
-  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
-}
-
-.dark .bc-actions {
-  background: #0d1829;
 }
 
 .bc-btn-visit {
