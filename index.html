@@ -3,6 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (function () {
+        var t = localStorage.getItem('bm-theme');
+        if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches))
+          document.documentElement.classList.add('dark');
+        if (localStorage.getItem('bm-form-collapsed') === 'true')
+          document.documentElement.dataset.formCollapsed = 'true';
+        if (localStorage.getItem('bm-categories-collapsed') === 'true')
+          document.documentElement.dataset.categoriesCollapsed = 'true';
+      })();
+    </script>
     <title>Bookmark Manager | Save & Organize Your Links</title>
     <meta name="description" content="A modern bookmark manager to save, organize, and search your bookmarks with ease." />
 
@@ -34,7 +45,20 @@
         </a>
 
         <div class="navbar-actions">
-          <button id="theme-toggle" class="theme-btn" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <button id="btn-export" class="nav-btn" type="button" aria-label="Export bookmarks" title="Export bookmarks">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4"/>
+            </svg>
+            <span class="nav-btn-label">Export</span>
+          </button>
+          <button id="btn-import" class="nav-btn" type="button" aria-label="Import bookmarks" title="Import bookmarks">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 14l5-5m0 0l5 5m-5-5V4"/>
+            </svg>
+            <span class="nav-btn-label">Import</span>
+          </button>
+          <input type="file" id="import-file" accept=".json,application/json" hidden />
+          <button id="theme-toggle" class="theme-btn" aria-label="Switch to dark mode" title="Switch to dark mode">
             <svg class="icon-sun" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"/>
             </svg>
@@ -72,16 +96,33 @@
       <div class="container main-content">
 
         <!-- Add Bookmark Form -->
-        <section class="card form-card" aria-labelledby="form-heading">
+        <section id="form-section" class="card form-card" aria-labelledby="form-heading">
           <div class="card-header">
-            <div class="card-icon" aria-hidden="true">
-              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
-              </svg>
+            <div class="card-header-left form-header-toggle">
+              <div class="card-icon" aria-hidden="true">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                </svg>
+              </div>
+              <h2 id="form-heading" class="card-title">Add New Bookmark</h2>
             </div>
-            <h2 id="form-heading" class="card-title">Add New Bookmark</h2>
+            <button
+              id="form-collapse-toggle"
+              type="button"
+              class="form-collapse-btn"
+              aria-expanded="true"
+              aria-controls="form-body"
+              aria-label="Collapse add bookmark form"
+              title="Collapse"
+            >
+              <svg class="form-collapse-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </button>
           </div>
 
+          <div id="form-body" class="form-body">
+            <div id="form-body-inner" class="form-body-inner">
           <form class="form-grid" novalidate>
             <div class="form-group">
               <label for="title" class="form-label">Title <span class="required" aria-label="required">*</span></label>
@@ -128,6 +169,8 @@
               </button>
             </div>
           </form>
+            </div>
+          </div>
         </section>
 
         <!-- Search -->
@@ -139,6 +182,40 @@
               </svg>
             </span>
             <input id="search" type="search" placeholder="Search by title or category..." class="search-input" aria-label="Search bookmarks" />
+          </div>
+        </section>
+
+        <!-- Category Tabs -->
+        <section id="category-tabs-section" class="category-tabs-section hidden" aria-label="Filter by category">
+          <div id="category-panel" class="category-tabs-panel">
+            <div class="category-tabs-head">
+              <div class="category-tabs-title category-header-toggle">
+                <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/>
+                </svg>
+                <span>Browse by category</span>
+              </div>
+              <button
+                id="category-collapse-toggle"
+                type="button"
+                class="form-collapse-btn"
+                aria-expanded="true"
+                aria-controls="category-tabs-body"
+                aria-label="Collapse category filters"
+                title="Collapse"
+              >
+                <svg class="form-collapse-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+            </div>
+            <div id="category-tabs-body" class="category-tabs-body">
+              <div id="category-tabs-body-inner" class="category-tabs-body-inner">
+                <div class="category-tabs-scroll-wrap">
+                  <div id="category-tabs" class="category-tabs" role="tablist"></div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
