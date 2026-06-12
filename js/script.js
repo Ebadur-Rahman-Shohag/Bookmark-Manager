@@ -7,18 +7,33 @@ const escapeHtml = (text) => {
 
 // ── Dark Mode ──────────────────────────────────────────────
 const themeToggle = document.getElementById('theme-toggle');
+const THEME_TRANSITION_MS = 400;
+let themeTransitionTimer;
 
-const applyTheme = (dark) => {
+const applyTheme = (dark, { animate = true } = {}) => {
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (animate && !reducedMotion) {
+    document.documentElement.classList.add('theme-animating');
+  }
+
   document.documentElement.classList.toggle('dark', dark);
   localStorage.setItem('bm-theme', dark ? 'dark' : 'light');
   const label = dark ? 'Switch to light mode' : 'Switch to dark mode';
   themeToggle.setAttribute('aria-label', label);
   themeToggle.setAttribute('title', label);
+
+  if (!animate || reducedMotion) return;
+
+  window.clearTimeout(themeToggleTimer);
+  themeToggleTimer = window.setTimeout(() => {
+    document.documentElement.classList.remove('theme-animating');
+  }, THEME_TRANSITION_MS);
 };
 
 const savedTheme = localStorage.getItem('bm-theme');
 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-applyTheme(savedTheme ? savedTheme === 'dark' : prefersDark);
+applyTheme(savedTheme ? savedTheme === 'dark' : prefersDark, { animate: false });
 
 themeToggle.addEventListener('click', () => {
   applyTheme(!document.documentElement.classList.contains('dark'));
