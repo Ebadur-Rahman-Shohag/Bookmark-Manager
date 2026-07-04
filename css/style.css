@@ -277,6 +277,11 @@ body {
               background var(--transition-slow);
 }
 
+/* Raise form above following sections (search, etc.) while dropdown is open */
+.form-card:has(.category-autocomplete-list:not(.hidden)) {
+  z-index: 20;
+}
+
 .form-card::before {
   content: '';
   position: absolute;
