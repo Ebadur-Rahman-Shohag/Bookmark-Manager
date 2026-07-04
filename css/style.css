@@ -270,7 +270,7 @@ body {
 
 .form-card {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   padding: 28px 32px 32px;
   transition: padding-bottom 0.45s cubic-bezier(0.4, 0, 0.2, 1),
               box-shadow var(--transition), border-color var(--transition),
@@ -353,12 +353,13 @@ body {
 }
 
 .form-body {
-  overflow: hidden;
+  overflow: visible;
   height: auto;
   transition: height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .form-body.is-animating {
+  overflow: hidden;
   will-change: height;
 }
 
@@ -483,6 +484,42 @@ html[data-categories-collapsed="true"] .category-tabs-panel .form-collapse-icon 
 
 .form-input:focus + .input-icon,
 .input-wrapper:focus-within .input-icon { color: var(--primary); }
+
+.category-autocomplete-wrap { position: relative; }
+
+.category-autocomplete-list {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 200;
+  max-height: 180px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.category-autocomplete-list.hidden { display: none; }
+
+.category-autocomplete-item {
+  padding: 8px 12px 8px 38px;
+  font-size: .875rem;
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.category-autocomplete-item:hover,
+.category-autocomplete-item.is-active {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
 
 .form-action { display: flex; align-items: flex-end; }
 

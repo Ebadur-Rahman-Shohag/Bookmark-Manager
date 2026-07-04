@@ -212,6 +212,96 @@ const getCategories = () => {
   return [...cats].sort((a, b) => a.localeCompare(b));
 };
 
+const getCategorySuggestions = (query) => {
+  const q = query.trim().toLowerCase();
+  return getCategories().filter((cat) => !q || cat.toLowerCase().includes(q));
+};
+
+const initCategoryAutocomplete = () => {
+  const input = document.getElementById('category');
+  const list = document.getElementById('category-autocomplete-list');
+  if (!input || !list) return;
+
+  let activeIndex = -1;
+
+  const hideList = () => {
+    list.classList.add('hidden');
+    list.innerHTML = '';
+    activeIndex = -1;
+    input.setAttribute('aria-expanded', 'false');
+  };
+
+  const selectSuggestion = (value) => {
+    input.value = value;
+    hideList();
+  };
+
+  const updateActiveItem = (items) => {
+    items.forEach((item, i) => {
+      item.classList.toggle('is-active', i === activeIndex);
+      if (i === activeIndex) item.scrollIntoView({ block: 'nearest' });
+    });
+  };
+
+  const renderSuggestions = () => {
+    const suggestions = getCategorySuggestions(input.value);
+    list.innerHTML = '';
+    activeIndex = -1;
+
+    if (!suggestions.length) {
+      hideList();
+      return;
+    }
+
+    suggestions.forEach((cat) => {
+      const item = document.createElement('li');
+      item.className = 'category-autocomplete-item';
+      item.setAttribute('role', 'option');
+      item.textContent = cat;
+      item.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        selectSuggestion(cat);
+      });
+      list.appendChild(item);
+    });
+
+    list.classList.remove('hidden');
+    input.setAttribute('aria-expanded', 'true');
+  };
+
+  input.addEventListener('focus', renderSuggestions);
+  input.addEventListener('input', renderSuggestions);
+
+  input.addEventListener(
+    'keydown',
+    (e) => {
+      const items = list.querySelectorAll('.category-autocomplete-item');
+      if (list.classList.contains('hidden') || !items.length) return;
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        activeIndex = Math.min(activeIndex + 1, items.length - 1);
+        updateActiveItem(items);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        activeIndex = Math.max(activeIndex - 1, 0);
+        updateActiveItem(items);
+      } else if (e.key === 'Enter' && activeIndex >= 0) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        selectSuggestion(items[activeIndex].textContent);
+      } else if (e.key === 'Escape') {
+        hideList();
+      }
+    },
+    true
+  );
+
+  input.addEventListener('blur', () => {
+    window.setTimeout(hideList, 150);
+  });
+};
+
 const hasUncategorized = () => getAllBookmarks().some((b) => !getCategoryValue(b));
 
 const countByCategory = (categoryId) => {
@@ -803,6 +893,7 @@ window.searchBookmarks = searchBookmarks;
 document.addEventListener('DOMContentLoaded', () => {
   initFormCollapse();
   initCategoryCollapse();
+  initCategoryAutocomplete();
   initSortable();
   renderCategoryTabs();
   renderBookmarks(getAllBookmarks(), { isFiltered: false, animate: true });
