@@ -223,12 +223,34 @@ const initCategoryAutocomplete = () => {
   if (!input || !list) return;
 
   let activeIndex = -1;
+  let wheelLocked = false;
+
+  const onWheelWhileOpen = (e) => {
+    if (list.classList.contains('hidden')) return;
+    e.preventDefault();
+    if (list.scrollHeight > list.clientHeight) {
+      list.scrollTop += e.deltaY;
+    }
+  };
+
+  const attachWheelLock = () => {
+    if (wheelLocked) return;
+    window.addEventListener('wheel', onWheelWhileOpen, { passive: false });
+    wheelLocked = true;
+  };
+
+  const detachWheelLock = () => {
+    if (!wheelLocked) return;
+    window.removeEventListener('wheel', onWheelWhileOpen);
+    wheelLocked = false;
+  };
 
   const hideList = () => {
     list.classList.add('hidden');
     list.innerHTML = '';
     activeIndex = -1;
     input.setAttribute('aria-expanded', 'false');
+    detachWheelLock();
   };
 
   const selectSuggestion = (value) => {
@@ -267,6 +289,7 @@ const initCategoryAutocomplete = () => {
 
     list.classList.remove('hidden');
     input.setAttribute('aria-expanded', 'true');
+    attachWheelLock();
   };
 
   input.addEventListener('focus', renderSuggestions);

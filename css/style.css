@@ -500,6 +500,7 @@ html[data-categories-collapsed="true"] .category-tabs-panel .form-collapse-icon 
   z-index: 200;
   max-height: 180px;
   overflow-y: auto;
+  overscroll-behavior: contain;
   margin: 0;
   padding: 4px;
   list-style: none;
