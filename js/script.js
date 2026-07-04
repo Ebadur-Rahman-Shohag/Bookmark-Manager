@@ -5,40 +5,6 @@ const escapeHtml = (text) => {
   return div.innerHTML;
 };
 
-// ── Dark Mode ──────────────────────────────────────────────
-const themeToggle = document.getElementById('theme-toggle');
-const THEME_TRANSITION_MS = 400;
-let themeTransitionTimer;
-
-const applyTheme = (dark, { animate = true } = {}) => {
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  if (animate && !reducedMotion) {
-    document.documentElement.classList.add('theme-animating');
-  }
-
-  document.documentElement.classList.toggle('dark', dark);
-  localStorage.setItem('bm-theme', dark ? 'dark' : 'light');
-  const label = dark ? 'Switch to light mode' : 'Switch to dark mode';
-  themeToggle.setAttribute('aria-label', label);
-  themeToggle.setAttribute('title', label);
-
-  if (!animate || reducedMotion) return;
-
-  window.clearTimeout(themeToggleTimer);
-  themeToggleTimer = window.setTimeout(() => {
-    document.documentElement.classList.remove('theme-animating');
-  }, THEME_TRANSITION_MS);
-};
-
-const savedTheme = localStorage.getItem('bm-theme');
-const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-applyTheme(savedTheme ? savedTheme === 'dark' : prefersDark, { animate: false });
-
-themeToggle.addEventListener('click', () => {
-  applyTheme(!document.documentElement.classList.contains('dark'));
-});
-
 // ── Collapsible sections ─────────────────────────────────────
 const createCollapsible = ({
   section,
@@ -168,9 +134,12 @@ const initCategoryCollapse = () => {
 };
 
 // ── SweetAlert2 helpers ────────────────────────────────────
+const cssVar = (name) =>
+  getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
 const swalTheme = () => ({
-  background: document.documentElement.classList.contains('dark') ? '#111827' : '#ffffff',
-  color:      document.documentElement.classList.contains('dark') ? '#F8FAFC'  : '#0F172A',
+  background: cssVar('--bg-card'),
+  color: cssVar('--text-primary'),
 });
 
 // ── Add Bookmark ───────────────────────────────────────────
@@ -722,7 +691,7 @@ const deleteBookmarks = (id) => {
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#EF4444',
-    cancelButtonColor: '#94A3B8',
+    cancelButtonColor: cssVar('--cancel-muted'),
     confirmButtonText: 'Yes, delete it',
     cancelButtonText: 'Cancel',
     ...swalTheme(),
@@ -749,17 +718,17 @@ const editBookmark = (id) => {
   const bookmark = data.find((item) => item.id === id);
   if (!bookmark) return;
 
-  const isDark = document.documentElement.classList.contains('dark');
   const inputStyle = `
     width:100%; padding:9px 12px; margin-top:6px;
-    background:${isDark ? '#1E293B' : '#F8FAFC'};
-    border:1.5px solid ${isDark ? '#334155' : '#CBD5E1'};
+    background:${cssVar('--bg-input')};
+    border:1px solid ${cssVar('--border-strong')};
     border-radius:10px; font-size:.875rem;
-    color:${isDark ? '#F8FAFC' : '#0F172A'};
+    color:${cssVar('--text-primary')};
     outline:none; font-family:inherit;
     text-align:left; direction:ltr;
     transition:border-color .2s;
   `;
+  const labelStyle = `font-size:.8rem;font-weight:600;color:${cssVar('--text-secondary')}`;
 
   Swal.fire({
     title: 'Edit Bookmark',
@@ -767,15 +736,15 @@ const editBookmark = (id) => {
     html: `
       <div style="text-align:left; display:flex; flex-direction:column; gap:14px;">
         <div>
-          <label style="font-size:.8rem;font-weight:600;color:${isDark ? '#94A3B8' : '#475569'}">Title *</label>
+          <label style="${labelStyle}">Title *</label>
           <input id="swal-title" value="${escapeHtml(bookmark.title)}" placeholder="e.g., GitHub" style="${inputStyle}" />
         </div>
         <div>
-          <label style="font-size:.8rem;font-weight:600;color:${isDark ? '#94A3B8' : '#475569'}">URL *</label>
+          <label style="${labelStyle}">URL *</label>
           <input id="swal-link" value="${escapeHtml(bookmark.link)}" placeholder="https://example.com" style="${inputStyle}" />
         </div>
         <div>
-          <label style="font-size:.8rem;font-weight:600;color:${isDark ? '#94A3B8' : '#475569'}">Category</label>
+          <label style="${labelStyle}">Category</label>
           <input id="swal-category" value="${escapeHtml(bookmark.category || '')}" placeholder="e.g., Development" style="${inputStyle}" />
         </div>
       </div>
@@ -783,8 +752,8 @@ const editBookmark = (id) => {
     showCancelButton: true,
     confirmButtonText: 'Save Changes',
     cancelButtonText: 'Cancel',
-    confirmButtonColor: '#10B981',
-    cancelButtonColor: isDark ? '#334155' : '#94A3B8',
+    confirmButtonColor: cssVar('--primary'),
+    cancelButtonColor: cssVar('--cancel-muted'),
     focusConfirm: false,
     didOpen: () => {
       // Allow Enter key to confirm from any input in the modal
