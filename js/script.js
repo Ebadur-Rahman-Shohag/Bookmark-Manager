@@ -134,12 +134,9 @@ const initCategoryCollapse = () => {
 };
 
 // ── SweetAlert2 helpers ────────────────────────────────────
-const cssVar = (name) =>
-  getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-
 const swalTheme = () => ({
-  background: cssVar('--bg-card'),
-  color: cssVar('--text-primary'),
+  background: '#142820',
+  color: '#ECFDF5',
 });
 
 // ── Add Bookmark ───────────────────────────────────────────
@@ -691,7 +688,7 @@ const deleteBookmarks = (id) => {
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#EF4444',
-    cancelButtonColor: cssVar('--cancel-muted'),
+    cancelButtonColor: '#94A3B8',
     confirmButtonText: 'Yes, delete it',
     cancelButtonText: 'Cancel',
     ...swalTheme(),
@@ -720,15 +717,14 @@ const editBookmark = (id) => {
 
   const inputStyle = `
     width:100%; padding:9px 12px; margin-top:6px;
-    background:${cssVar('--bg-input')};
-    border:1px solid ${cssVar('--border-strong')};
+    background:#1A3228;
+    border:1px solid #2D5A47;
     border-radius:10px; font-size:.875rem;
-    color:${cssVar('--text-primary')};
+    color:#ECFDF5;
     outline:none; font-family:inherit;
     text-align:left; direction:ltr;
     transition:border-color .2s;
   `;
-  const labelStyle = `font-size:.8rem;font-weight:600;color:${cssVar('--text-secondary')}`;
 
   Swal.fire({
     title: 'Edit Bookmark',
@@ -736,15 +732,15 @@ const editBookmark = (id) => {
     html: `
       <div style="text-align:left; display:flex; flex-direction:column; gap:14px;">
         <div>
-          <label style="${labelStyle}">Title *</label>
+          <label style="font-size:.8rem;font-weight:600;color:#A7C4B8">Title *</label>
           <input id="swal-title" value="${escapeHtml(bookmark.title)}" placeholder="e.g., GitHub" style="${inputStyle}" />
         </div>
         <div>
-          <label style="${labelStyle}">URL *</label>
+          <label style="font-size:.8rem;font-weight:600;color:#A7C4B8">URL *</label>
           <input id="swal-link" value="${escapeHtml(bookmark.link)}" placeholder="https://example.com" style="${inputStyle}" />
         </div>
         <div>
-          <label style="${labelStyle}">Category</label>
+          <label style="font-size:.8rem;font-weight:600;color:#A7C4B8">Category</label>
           <input id="swal-category" value="${escapeHtml(bookmark.category || '')}" placeholder="e.g., Development" style="${inputStyle}" />
         </div>
       </div>
@@ -752,8 +748,8 @@ const editBookmark = (id) => {
     showCancelButton: true,
     confirmButtonText: 'Save Changes',
     cancelButtonText: 'Cancel',
-    confirmButtonColor: cssVar('--primary'),
-    cancelButtonColor: cssVar('--cancel-muted'),
+    confirmButtonColor: '#22C55E',
+    cancelButtonColor: '#2D5A47',
     focusConfirm: false,
     didOpen: () => {
       // Allow Enter key to confirm from any input in the modal
