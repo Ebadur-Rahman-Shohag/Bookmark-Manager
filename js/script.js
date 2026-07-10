@@ -363,8 +363,9 @@ const getCurrentView = () => {
   const allData = getAllBookmarks();
   let data = filterByCategory(allData, activeCategory);
   data = filterBookmarks(data, query);
-  const isFiltered = !!query || activeCategory !== 'all';
-  return { data, isFiltered };
+  const isSearchActive = !!query;
+  const isFiltered = isSearchActive || activeCategory !== 'all';
+  return { data, isFiltered, isSearchActive };
 };
 
 const addToLocalStorage = (title, link, category) => {
@@ -550,13 +551,13 @@ const buildCardHTML = (bookmark) => {
   try { displayUrl = new URL(bookmark.link).hostname.replace(/^www\./, ''); } catch {}
 
   return `
+    <div class="bc-drag-handle" title="Drag to reorder" aria-label="Drag to reorder">
+      <svg width="20" height="10" viewBox="0 0 20 10" fill="currentColor" aria-hidden="true">
+        <circle cx="2.5" cy="2.5" r="1.5"/><circle cx="10" cy="2.5" r="1.5"/><circle cx="17.5" cy="2.5" r="1.5"/>
+        <circle cx="2.5" cy="7.5" r="1.5"/><circle cx="10" cy="7.5" r="1.5"/><circle cx="17.5" cy="7.5" r="1.5"/>
+      </svg>
+    </div>
     <article class="bookmark-card" role="listitem" aria-label="${escapeHtml(bookmark.title)}">
-      <div class="bc-drag-handle" title="Drag to reorder" aria-label="Drag to reorder">
-        <svg width="20" height="10" viewBox="0 0 20 10" fill="currentColor" aria-hidden="true">
-          <circle cx="2.5" cy="2.5" r="1.5"/><circle cx="10" cy="2.5" r="1.5"/><circle cx="17.5" cy="2.5" r="1.5"/>
-          <circle cx="2.5" cy="7.5" r="1.5"/><circle cx="10" cy="7.5" r="1.5"/><circle cx="17.5" cy="7.5" r="1.5"/>
-        </svg>
-      </div>
       <div class="bc-top">
         <div class="bc-favicon" aria-hidden="true">${faviconHTML}</div>
         <div class="bc-meta">
@@ -667,10 +668,11 @@ const initSortable = () => {
 };
 
 // ── Display bookmarks ──────────────────────────────────────
-const renderBookmarks = (data, { isFiltered = false, animate = false } = {}) => {
+const renderBookmarks = (data, { isFiltered = false, isSearchActive = false, animate = false } = {}) => {
   const container = document.getElementById('bookmarks-container');
   container.innerHTML = '';
-  container.classList.toggle('search-active', isFiltered);
+  // search-active class only hides drag handles — only apply when search query is present
+  container.classList.toggle('search-active', isSearchActive);
 
   if (data.length === 0) {
     document.getElementById('not-found').classList.remove('hidden');
@@ -701,7 +703,7 @@ const renderBookmarks = (data, { isFiltered = false, animate = false } = {}) => 
     container.appendChild(wrapper);
   });
 
-  sortableInstance?.option('disabled', isFiltered);
+  sortableInstance?.option('disabled', isSearchActive);
 };
 
 const renderCategoryTabs = () => {
@@ -747,7 +749,7 @@ const renderCategoryTabs = () => {
     btn.addEventListener('click', () => {
       if (activeCategory === tab.id) return;
       activeCategory = tab.id;
-      refreshView();
+      refreshView({ animate: true });
       requestAnimationFrame(() => {
         container.querySelector('.category-tab.is-active')?.scrollIntoView({
           behavior: 'smooth',
@@ -781,14 +783,13 @@ const updateCategoryTabsScrollState = () => {
 
 const refreshView = ({ animate = false } = {}) => {
   renderCategoryTabs();
-  const { data, isFiltered } = getCurrentView();
-  renderBookmarks(data, { isFiltered, animate });
+  const { data, isFiltered, isSearchActive } = getCurrentView();
+  renderBookmarks(data, { isFiltered, isSearchActive, animate });
 };
 
 // ── Search ─────────────────────────────────────────────────
 const searchBookmarks = () => {
-  const { data, isFiltered } = getCurrentView();
-  renderBookmarks(data, { isFiltered, animate: false });
+  refreshView({ animate: false });
 };
 
 document.getElementById('search').addEventListener('input', searchBookmarks);
