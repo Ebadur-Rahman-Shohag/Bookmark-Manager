@@ -135,8 +135,8 @@ const initCategoryCollapse = () => {
 
 // ── SweetAlert2 helpers ────────────────────────────────────
 const swalTheme = () => ({
-  background: '#142820',
-  color: '#ECFDF5',
+  background: '#161B22',
+  color: '#F0F6FC',
 });
 
 // ── Add Bookmark ───────────────────────────────────────────
@@ -830,10 +830,10 @@ const editBookmark = (id) => {
 
   const inputStyle = `
     width:100%; padding:9px 12px; margin-top:6px;
-    background:#1A3228;
-    border:1px solid #2D5A47;
+    background:#1C2128;
+    border:1px solid #30363D;
     border-radius:10px; font-size:.875rem;
-    color:#ECFDF5;
+    color:#F0F6FC;
     outline:none; font-family:inherit;
     text-align:left; direction:ltr;
     transition:border-color .2s;
@@ -845,15 +845,15 @@ const editBookmark = (id) => {
     html: `
       <div style="text-align:left; display:flex; flex-direction:column; gap:14px;">
         <div>
-          <label style="font-size:.8rem;font-weight:600;color:#A7C4B8">Title *</label>
+          <label style="font-size:.8rem;font-weight:600;color:#8B949E">Title *</label>
           <input id="swal-title" value="${escapeHtml(bookmark.title)}" placeholder="e.g., GitHub" style="${inputStyle}" />
         </div>
         <div>
-          <label style="font-size:.8rem;font-weight:600;color:#A7C4B8">URL *</label>
+          <label style="font-size:.8rem;font-weight:600;color:#8B949E">URL *</label>
           <input id="swal-link" value="${escapeHtml(bookmark.link)}" placeholder="https://example.com" style="${inputStyle}" />
         </div>
         <div>
-          <label style="font-size:.8rem;font-weight:600;color:#A7C4B8">Category</label>
+          <label style="font-size:.8rem;font-weight:600;color:#8B949E">Category</label>
           <input id="swal-category" value="${escapeHtml(bookmark.category || '')}" placeholder="e.g., Development" style="${inputStyle}" />
         </div>
       </div>
@@ -861,8 +861,8 @@ const editBookmark = (id) => {
     showCancelButton: true,
     confirmButtonText: 'Save Changes',
     cancelButtonText: 'Cancel',
-    confirmButtonColor: '#22C55E',
-    cancelButtonColor: '#2D5A47',
+    confirmButtonColor: '#3B82F6',
+    cancelButtonColor: '#21262D',
     focusConfirm: false,
     didOpen: () => {
       // Allow Enter key to confirm from any input in the modal
