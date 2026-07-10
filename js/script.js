@@ -829,14 +829,14 @@ const editBookmark = (id) => {
   if (!bookmark) return;
 
   const inputStyle = `
-    width:100%; padding:9px 12px; margin-top:6px;
+    width:100%; padding:9px 12px; margin-top:5px;
     background:#1C2128;
     border:1px solid #30363D;
     border-radius:10px; font-size:.875rem;
-    color:#F0F6FC;
+    color:#F0F6FC; letter-spacing:-.01em;
     outline:none; font-family:inherit;
     text-align:left; direction:ltr;
-    transition:border-color .2s;
+    transition:border-color .18s, box-shadow .18s;
   `;
 
   Swal.fire({
