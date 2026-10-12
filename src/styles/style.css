@@ -48,6 +48,58 @@
 }
 
 /* ============================================================
+   BASE RESET (subset of Tailwind Preflight the design was built on)
+   ============================================================ */
+*, *::before, *::after { border-width: 0; border-style: solid; border-color: #e5e7eb; }
+
+html { line-height: 1.5; -webkit-text-size-adjust: 100%; tab-size: 4; }
+
+b, strong { font-weight: bolder; }
+
+h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; }
+
+a { color: inherit; text-decoration: inherit; }
+
+ol, ul, menu { list-style: none; }
+
+button, input, optgroup, select, textarea {
+  font-family: inherit;
+  font-feature-settings: inherit;
+  font-variation-settings: inherit;
+  font-size: 100%;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+}
+
+button, [type='button'], [type='reset'], [type='submit'] {
+  -webkit-appearance: button;
+  background-color: transparent;
+  background-image: none;
+}
+
+button, [role='button'] { cursor: pointer; }
+
+/* SweetAlert2 styles its buttons through zero-specificity :where() rules, which the reset above beats. */
+.swal2-styled.swal2-confirm { background-color: var(--swal2-confirm-button-background-color, #3b82f6); }
+.swal2-styled.swal2-cancel  { background-color: var(--swal2-cancel-button-background-color, #6e7881); }
+.swal2-styled.swal2-deny    { background-color: var(--swal2-deny-button-background-color, #dc3741); }
+
+/* Keep corner toasts clear of the sticky 60px navbar. */
+.swal2-container.swal2-top-end { padding-top: 72px; }
+
+[type='search'] { -webkit-appearance: textfield; outline-offset: -2px; }
+::-webkit-search-decoration { -webkit-appearance: none; }
+
+input::placeholder, textarea::placeholder { opacity: 1; color: #9ca3af; }
+
+img, svg, video, canvas, audio, iframe, embed, object { display: block; vertical-align: middle; }
+img, video { max-width: 100%; height: auto; }
+
+[hidden] { display: none; }
+
+/* ============================================================
    RESET & BASE
    ============================================================ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -59,7 +111,7 @@ body {
   -webkit-font-smoothing: antialiased;
   background-color: var(--bg);
   color: var(--text-primary);
-  line-height: 1.6;
+  line-height: inherit;
   min-height: 100vh;
   font-feature-settings: 'cv02','cv03','cv04','cv11';
 }
@@ -79,7 +131,14 @@ body {
 /* ============================================================
    LAYOUT
    ============================================================ */
-.container { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+.container { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+
+/* Responsive max-widths (Tailwind's container breakpoints) */
+@media (min-width: 640px)  { .container { max-width: 640px; } }
+@media (min-width: 768px)  { .container { max-width: 768px; } }
+@media (min-width: 1024px) { .container { max-width: 1024px; } }
+@media (min-width: 1280px) { .container { max-width: 1280px; } }
+@media (min-width: 1536px) { .container { max-width: 1536px; } }
 
 .main-content {
   padding-top: 52px;
@@ -282,7 +341,7 @@ body {
 }
 
 /* Raise form when autocomplete is open */
-.form-card:has(.category-autocomplete-list:not(.hidden)) { z-index: 20; }
+.form-card:has(.category-autocomplete-list.is-open) { z-index: 20; }
 
 /* Top accent bar */
 .form-card::before {
@@ -446,12 +505,39 @@ html[data-categories-collapsed="true"] .category-tabs-panel .form-collapse-icon 
 
 .category-autocomplete-wrap { position: relative; }
 
+.form-input.has-trailing-actions { padding-right: 64px; }
+
+.category-autocomplete-actions {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.category-autocomplete-action {
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  transition: color var(--transition), background-color var(--transition);
+}
+.category-autocomplete-action:hover { color: var(--text-primary); background: var(--bg-hover); }
+.category-autocomplete-chevron svg { transition: transform .2s cubic-bezier(0.4,0,0.2,1); }
+.category-autocomplete-wrap.is-open .category-autocomplete-chevron svg { transform: rotate(180deg); }
+.category-autocomplete-wrap.is-open .category-autocomplete-chevron { color: var(--primary-mid); }
+
 .category-autocomplete-list {
   position: absolute;
-  top: calc(100% + 4px);
+  top: calc(100% + 6px);
   left: 0; right: 0;
   z-index: 200;
-  max-height: 180px;
+  max-height: 232px;
   overflow-y: auto;
   overscroll-behavior: contain;
   margin: 0;
@@ -461,21 +547,80 @@ html[data-categories-collapsed="true"] .category-tabs-panel .form-collapse-icon 
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-4px) scale(.98);
+  transform-origin: top center;
+  transition: opacity .14s ease, transform .16s cubic-bezier(0.25, 1, 0.5, 1), visibility 0s linear .16s;
+  scrollbar-width: thin;
 }
-.category-autocomplete-list.hidden { display: none; }
+.category-autocomplete-list.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: none;
+  transition: opacity .14s ease, transform .16s cubic-bezier(0.25, 1, 0.5, 1), visibility 0s;
+}
 
 .category-autocomplete-item {
-  padding: 8px 12px 8px 36px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
   font-size: .875rem;
   color: var(--text-secondary);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: background var(--transition), color var(--transition);
+  scroll-margin: 4px;
+  transition: background-color .1s ease, color .1s ease;
 }
-.category-autocomplete-item:hover,
 .category-autocomplete-item.is-active {
   background: var(--bg-hover);
   color: var(--text-primary);
+}
+.category-autocomplete-icon { display: flex; color: var(--text-muted); flex-shrink: 0; }
+.category-autocomplete-item.is-active .category-autocomplete-icon { color: var(--primary-mid); }
+.category-autocomplete-item.is-selected { color: var(--primary-mid); font-weight: 600; }
+.category-autocomplete-item.is-selected .category-autocomplete-icon { color: var(--primary-mid); }
+.category-autocomplete-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.category-autocomplete-match {
+  background: none;
+  color: var(--primary-mid);
+  font-weight: 600;
+}
+.category-autocomplete-count {
+  min-width: 22px;
+  height: 20px;
+  padding: 0 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  background: rgba(110,118,129,.1);
+  border: 1px solid rgba(110,118,129,.18);
+  color: var(--text-muted);
+  font-size: .6875rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.category-autocomplete-item.is-create { color: var(--primary-mid); }
+.category-autocomplete-item.is-create .category-autocomplete-icon { color: var(--primary-mid); }
+.category-autocomplete-item.is-create:not(:first-child) {
+  margin-top: 4px;
+  position: relative;
+}
+.category-autocomplete-item.is-create:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  top: -3px; left: 8px; right: 8px;
+  height: 1px;
+  background: var(--border);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .category-autocomplete-list,
+  .category-autocomplete-list.is-open { transition: none; }
 }
 
 .form-action { display: flex; align-items: flex-end; }
@@ -810,17 +955,86 @@ html[data-categories-collapsed="true"] .category-tabs-panel .category-tabs-body-
 }
 
 /* Drag states */
-.sortable-ghost .bookmark-card { opacity: 0.35; }
-.sortable-chosen .bookmark-card {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(59,130,246,.35), var(--shadow-md);
+:root {
+  --drag-ease: cubic-bezier(0.25, 1, 0.5, 1);
+  --drag-shadow-lifted: 0 0 0 2px rgba(59,130,246,.35), 0 18px 40px rgba(0,0,0,.55), 0 6px 14px rgba(0,0,0,.35);
 }
-.sortable-drag .bookmark-card { transform: scale(1.02); box-shadow: var(--shadow-lg); }
-.sortable-fallback { opacity: 0.92; z-index: 9999; user-select: none; -webkit-user-select: none; }
+
+/* Drop slot: the card's original spot becomes an empty dashed outline */
+.bookmark-card-wrapper.sortable-ghost {
+  outline: 2px dashed rgba(96,165,250,.55);
+  outline-offset: -2px;
+  border-radius: var(--radius-lg);
+  background: rgba(59,130,246,.05);
+}
+.bookmark-card-wrapper.sortable-ghost > * { visibility: hidden; }
+
+/* Dragged copy: lifts on pick-up, settles back while the drop animation runs */
+.bookmark-card-wrapper.sortable-drag {
+  transform-origin: 50% 30%;
+  animation: dragLift .16s var(--drag-ease) forwards;
+}
+.sortable-drag .bookmark-card { animation: dragLiftShadow .16s var(--drag-ease) forwards; }
+.sortable-drag .bc-drag-handle {
+  color: var(--text-secondary);
+  background: rgba(59,130,246,.15);
+  border-color: rgba(59,130,246,.25);
+  border-left-color: var(--primary-mid);
+}
+.is-dropping .bookmark-card-wrapper.sortable-drag { animation: dragSettle .2s var(--drag-ease) forwards; }
+.is-dropping .sortable-drag .bookmark-card { animation: dragSettleShadow .2s var(--drag-ease) forwards; }
+
+@keyframes dragLift {
+  from { transform: scale(1) rotate(0deg); }
+  to   { transform: scale(1.03) rotate(1.5deg); }
+}
+@keyframes dragSettle {
+  from { transform: scale(1.03) rotate(1.5deg); }
+  to   { transform: scale(1) rotate(0deg); }
+}
+@keyframes dragLiftShadow {
+  from { box-shadow: var(--shadow-sm); }
+  to   { box-shadow: var(--drag-shadow-lifted); }
+}
+@keyframes dragSettleShadow {
+  from { box-shadow: var(--drag-shadow-lifted); }
+  to   { box-shadow: var(--shadow-sm); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bookmark-card-wrapper.sortable-drag,
+  .sortable-drag .bookmark-card,
+  .is-dropping .bookmark-card-wrapper.sortable-drag,
+  .is-dropping .sortable-drag .bookmark-card { animation: none; }
+}
+
+/* Auto-scroll moves the page in small steps; smooth scrolling would animate each one and stutter */
+html.is-sorting { scroll-behavior: auto; }
 
 body.is-sorting,
 .bookmarks-grid.is-sorting,
 .bookmarks-grid.is-sorting * { user-select: none; -webkit-user-select: none; }
+
+body.is-sorting,
+body.is-sorting * { cursor: grabbing; }
+
+/* Re-blurring the sticky navbar every frame while cards move under it causes stutter */
+body.is-sorting .navbar {
+  background: var(--bg);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.bookmarks-grid.is-sorting .bookmark-card-wrapper { will-change: transform; }
+
+.bookmarks-grid.is-sorting .bc-drag-handle,
+.bookmarks-grid.is-sorting .bookmark-card-wrapper:hover .bc-drag-handle {
+  transform: none;
+  color: var(--border-strong);
+  background: var(--bg-input);
+  border-color: var(--border);
+  border-left-color: var(--primary-dark);
+}
 
 .bookmarks-grid.is-sorting .bookmark-card:hover {
   transform: none;
@@ -843,13 +1057,30 @@ body.is-sorting,
   border-left: 2px solid var(--primary-dark);
   border-bottom: none;
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: color .25s cubic-bezier(0.4, 0, 0.2, 1),
+              background-color .25s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color .25s cubic-bezier(0.4, 0, 0.2, 1),
+              transform .25s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: grab;
   line-height: 0;
-  touch-action: none;
+  /* Lets the page scroll until the touch press-and-hold activates a drag */
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
   -webkit-user-drag: none;
   user-select: none;
   -webkit-user-select: none;
+}
+/* ~44px tall on touch screens so the press-and-hold target is easy to hit */
+@media (pointer: coarse) {
+  .bc-drag-handle { padding-top: 17px; padding-bottom: 17px; }
+}
+.bc-drag-handle:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  color: var(--text-secondary);
+  background: rgba(59,130,246,.08);
+  border-left-color: var(--primary-mid);
 }
 .bookmark-card-wrapper:hover .bc-drag-handle {
   color: var(--text-secondary);
@@ -864,8 +1095,6 @@ body.is-sorting,
   transform: scale(.98);
   transition: transform .1s ease;
 }
-.bookmarks-grid.search-active .bc-drag-handle { display: none; }
-
 @keyframes fadeSlideUp {
   from { 
     opacity: 0; 
@@ -1066,6 +1295,183 @@ body.is-sorting,
   color: var(--danger);
 }
 
+/* Position (#N) — click to type a new position */
+.bc-position,
+.bc-position-input {
+  height: 34px;
+  min-width: 42px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  font-size: .78rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+}
+.bc-position {
+  padding: 0 9px;
+  color: var(--text-muted);
+  background: transparent;
+  transition: all var(--transition);
+}
+.bc-position:hover:not(:disabled) {
+  color: var(--primary-mid);
+  border-color: rgba(59,130,246,.4);
+  background: rgba(59,130,246,.08);
+}
+.bc-position:disabled { cursor: default; opacity: .6; }
+.bc-position-input {
+  width: 58px;
+  padding: 0 6px;
+  text-align: center;
+  color: var(--text-primary);
+  background: #1A2035;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+  outline: none;
+  -moz-appearance: textfield;
+}
+.bc-position-input::-webkit-outer-spin-button,
+.bc-position-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+/* Brief highlight after moving a card by number */
+.bookmark-card-wrapper.is-moved .bookmark-card { animation: movedPulse 1.4s ease-out; }
+.bookmark-card-wrapper.is-moved .bc-drag-handle { border-left-color: var(--primary-mid); }
+@keyframes movedPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(59,130,246,.55), var(--shadow-sm); border-color: var(--primary); }
+  60%  { box-shadow: 0 0 0 6px rgba(59,130,246,0), var(--shadow-sm); border-color: var(--primary); }
+  100% { box-shadow: var(--shadow-sm); }
+}
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 10vh 16px 24px;
+  overflow-y: auto;
+  background: rgba(1,4,9,.68);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: modalFadeIn .18s ease both;
+}
+.modal-backdrop.is-closing { animation: modalFadeOut .16s ease both; }
+
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 24px 64px rgba(0,0,0,.6), 0 8px 20px rgba(0,0,0,.4);
+  padding: 22px 24px 24px;
+  animation: modalPopIn .22s cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+.modal::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary-dark), var(--primary-mid), var(--accent));
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.modal-backdrop.is-closing .modal { animation: modalPopOut .16s ease both; }
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.modal-body { display: flex; flex-direction: column; gap: 14px; }
+
+.modal-row {
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  gap: 14px;
+  align-items: start;
+}
+
+.modal-position-group .form-input { padding-right: 10px; }
+
+.form-hint { font-size: .72rem; color: var(--text-muted); }
+
+.form-error {
+  font-size: .78rem;
+  color: var(--danger);
+}
+.modal-row + .form-error { margin-top: -8px; }
+
+.form-input[aria-invalid='true'] { border-color: var(--danger-border); }
+.form-input[aria-invalid='true']:focus {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px var(--danger-bg);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}
+.modal-footer .btn-primary { width: auto; }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 18px;
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  font-size: .875rem;
+  font-weight: 600;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  transition: all var(--transition);
+}
+.btn-secondary:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+@keyframes modalFadeIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modalFadeOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes modalPopIn {
+  from { opacity: 0; transform: translateY(10px) scale(.97); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes modalPopOut {
+  from { opacity: 1; transform: none; }
+  to   { opacity: 0; transform: translateY(6px) scale(.98); }
+}
+
+@media (max-width: 520px) {
+  .modal { padding: 20px 18px 20px; }
+  .modal-row { grid-template-columns: 1fr; }
+  .modal-footer .btn-primary,
+  .modal-footer .btn-secondary { flex: 1; justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-backdrop, .modal, .modal-backdrop.is-closing, .modal-backdrop.is-closing .modal { animation: none; }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ============================================================
    FOOTER
    ============================================================ */
@@ -1102,13 +1508,20 @@ body.is-sorting,
 
   .main-content { padding-top: 32px; padding-bottom: 64px; gap: 16px; }
 
-  .bookmarks-grid { grid-template-columns: 1fr; gap: 12px; }
+  .bookmarks-grid { gap: 12px; }
+}
+
+@media (max-width: 640px) {
+  .bookmarks-grid { grid-template-columns: 1fr; }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .bookmarks-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
   .form-grid { grid-template-columns: 1fr 1fr; }
   .form-action { grid-column: span 2; }
-  .bookmarks-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (min-width: 1025px) and (max-width: 1280px) {
